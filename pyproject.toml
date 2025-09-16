@@ -1,0 +1,216 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aa-va"
+version = "0.1.0"
+description = "Autonomous Android Visual Analyzer - AI-powered Android testing framework"
+authors = [
+    {name = "AA-VA Team", email = "team@aa-va.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "adbutils==0.13.3",
+    "Pillow==10.0.1",
+    "python-dotenv==1.0.0",
+    "jupytext==1.15.1",
+    "openai==1.3.7",
+    "tiktoken==0.5.1",
+    "numpy==1.24.3",
+    "pandas==2.0.3",
+    "pydantic==2.4.2",
+    "pydantic-settings==2.0.3",
+    "loguru==0.7.2",
+    "opencv-python==4.8.1.78",
+    "pytesseract==0.3.10",
+    "scikit-image==0.21.0",
+    "psutil==5.9.5",
+    "memory-profiler==0.60.0",
+    "asyncio-throttle==1.0.2",
+    "aiofiles==23.2.1",
+    "redis==5.0.1",
+    "diskcache==5.6.3",
+    "pytest==7.4.2",
+    "pytest-asyncio==0.21.1",
+    "pytest-cov==4.1.0",
+    "rich==13.6.0",
+    "typer==0.9.0",
+    "fastapi==0.104.1",
+    "uvicorn==0.23.2",
+    "GitPython==3.1.37",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.1.0",
+    "pre-commit>=3.0.0",
+    "mypy>=1.0.0",
+    "pytest-benchmark>=4.0.0",
+]
+ml = [
+    "torch==2.1.0",
+    "transformers==4.35.0",
+    "gymnasium==0.29.1",
+]
+
+[project.scripts]
+aa-va = "scripts.universal_apk_tester:main"
+
+[tool.ruff]
+# Enable pycodestyle (`E`), Pyflakes (`F`), and isort (`I`) codes by default.
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # Pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+    "N",  # pep8-naming
+    "ARG001", # unused-function-args
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "TID", # flake8-tidy-imports
+    "Q",  # flake8-quotes
+    "RSE", # flake8-raise
+    "RET", # flake8-return
+    "PIE", # flake8-pie
+    "LOG", # flake8-logging-format
+    "PTH", # flake8-use-pathlib
+    "ERA", # eradicate
+    "PD",  # pandas-vet
+    "PGH", # pygrep-hooks
+    "PL",  # Pylint
+    "TRY", # tryceratops
+    "NPY", # numpy-vet
+    "AIR", # flake8-airflow
+    "PERF", # perflint
+    "FBT", # flake8-boolean-trap
+    "COM", # flake8-commas
+    "DTZ", # flake8-datetimez
+    "T20", # flake8-print
+    "PYI", # flake8-pyi
+    "PT",  # flake8-pytest-style
+    "Q",  # flake8-quotes
+    "RUF", # Ruff-specific rules
+]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+# Assume Python 3.10
+target-version = "py310"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+[tool.ruff.lint]
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume the presence of `__all__`, `__version__`, and `__author__` in the root package.
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/**/*" = ["PLR2004", "S101", "PLR0913", "PLR0912"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src", "scripts", "Explorer"]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 88
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+[tool.ruff.lint.flake8-unused-arguments]
+ignore-variadic-names = true
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "cv2.*",
+    "pytesseract.*",
+    "psutil.*",
+    "redis.*",
+    "diskcache.*",
+    "torch.*",
+    "transformers.*",
+    "gymnasium.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+] 
