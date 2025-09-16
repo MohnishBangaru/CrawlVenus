@@ -19,7 +19,21 @@ import os
 from PIL import Image
 from loguru import logger
 import torch
-from transformers import AutoProcessor, AutoModelForCausalLM
+
+# Prefer the dedicated Qwen2 vision-language class when present (needed for
+# inclusionAI/UI-Venus-Ground-7B and other Qwen-VL derivatives).  Fallback to the
+# generic AutoModelForCausalLM so the module still works on older Transformers
+# versions.
+
+try:  # Transformers ≥ 4.41.0
+    from transformers import Qwen2VLForConditionalGeneration  # type: ignore
+    _QWEN_VL_AVAILABLE = True
+except ImportError:  # Older transformers
+    from transformers import AutoModelForCausalLM  # type: ignore
+    Qwen2VLForConditionalGeneration = None  # placeholder
+    _QWEN_VL_AVAILABLE = False
+
+from transformers import AutoProcessor
 
 from ..core.config import config
 from .models import UIElement, BoundingBox
@@ -35,7 +49,12 @@ class UIVenusGroundingEngine:  # noqa: D101
         self.processor = AutoProcessor.from_pretrained(
             self.model_name, trust_remote_code=True, token=self.hf_token
         )
-        self.model = AutoModelForCausalLM.from_pretrained(
+
+        model_cls = (
+            Qwen2VLForConditionalGeneration if _QWEN_VL_AVAILABLE else AutoModelForCausalLM
+        )
+
+        self.model = model_cls.from_pretrained(
             self.model_name,
             torch_dtype=torch.float16 if self.device == "cuda" else torch.float32,
             device_map="auto" if self.device == "cuda" else None,
